@@ -26,9 +26,7 @@ class GoalViewModel(private val repository: GoalRepository) : ViewModel() {
     fun addGoal(goal: String) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.addGoal(goal)
-//            val updatedGoals = repository.getGoals()
             withContext(Dispatchers.Main) {
-//                goals = updatedGoals
                 goals = repository.getGoals()
             }
         }

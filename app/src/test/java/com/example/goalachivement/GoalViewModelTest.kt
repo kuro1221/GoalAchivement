@@ -54,4 +54,23 @@ class GoalViewModelTest {
         // 初期の目標リストとViewModelの目標が一致することを確認
         assertEquals(listOf("初期目標1", "初期目標2", "初期目標3"), viewModel.goals)
     }
+
+    @Test
+    fun testAddGoal() = runBlockingTest {
+        // 新しい目標を追加
+        val newGoal = "新しい目標"
+        viewModel.addGoal(newGoal)
+        advanceUntilIdle()
+        // 新しい目標がリストに追加されていることを確認
+        assertEquals(listOf("初期目標1", "初期目標2", "初期目標3", "新しい目標"), viewModel.goals)
+//        assertTrue(viewModel.goals.contains(newGoal))
+    }
+
+    @Test
+    fun testDeleteGoal() = runBlockingTest {
+        val deleteGoal = "初期目標1"
+        viewModel.deleteGoal(deleteGoal)
+        advanceUntilIdle()
+        assertFalse(viewModel.goals.contains(deleteGoal))
+    }
 }
