@@ -41,28 +41,30 @@ import androidx.compose.ui.text.input.TextFieldValue
 //import androidx.compose.material.TextField
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.saveable.rememberSaveable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddGoalScreen() {
-    val viewModel = GoalViewModel(GoalRepository())
+    val viewModel = remember { GoalViewModel(GoalRepository()) }
 
     // 画面が最初に表示されるときに目標をロード
     LaunchedEffect(Unit) {
         viewModel.loadGoals()
     }
 
-    var goalText by remember { mutableStateOf("") }
-    var goalsList by remember { mutableStateOf(listOf<String>()) }
+    var goalText by rememberSaveable { mutableStateOf("") }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // 2. 目標入力エリア
         TextField(
             value = goalText,
-            onValueChange = { goalText = it },
+            onValueChange = { newValue -> goalText = newValue },
             label = { Text("新しい目標") },
             modifier = Modifier.fillMaxWidth(),
             keyboardActions = KeyboardActions(onDone = {

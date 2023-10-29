@@ -5,10 +5,10 @@ import kotlinx.coroutines.sync.withLock
 
 open class GoalRepository {
     // ダミーの目標リスト
-    private val dummyGoals = mutableListOf(
+    protected open val dummyGoals = mutableListOf(
         "スパルタンレース完走",
         "簿記2級",
-        "応用情報処理試験合格"
+        "応用情報処理試験合格",
     )
 
     // 排他制御のためのMutex

@@ -69,4 +69,5 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.4.0")
     implementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
 }

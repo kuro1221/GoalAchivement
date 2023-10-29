@@ -2,31 +2,45 @@ package com.example.goalachivement
 
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.goalachivement.GoalRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import android.util.Log
 
 class GoalViewModel(private val repository: GoalRepository) : ViewModel() {
     var goals by mutableStateOf<List<String>>(listOf())
 
     fun loadGoals() {
-        CoroutineScope(Dispatchers.IO).launch {
-            goals = repository.getGoals()
+        viewModelScope.launch(Dispatchers.IO) {
+//            val loadedGoals = repository.getGoals()
+//            Log.d("GoalTest", "出力； $loadedGoals");
+            withContext(Dispatchers.Main) {
+                goals = repository.getGoals()
+            }
         }
     }
 
     fun addGoal(goal: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.addGoal(goal)
-            loadGoals()
+//            val updatedGoals = repository.getGoals()
+            withContext(Dispatchers.Main) {
+//                goals = updatedGoals
+                goals = repository.getGoals()
+            }
         }
     }
 
     fun deleteGoal(goal: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.deleteGoal(goal)
-            loadGoals()
+            val updatedGoals = repository.getGoals()
+            withContext(Dispatchers.Main) {
+                goals = updatedGoals
+            }
         }
     }
 }

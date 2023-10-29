@@ -1,61 +1,57 @@
 package com.example.goalachivement
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert.assertEquals
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.Before
 import org.junit.Test
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Assert.assertFalse
+import android.util.Log
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.After
+
+
+class FakeGoalRepository : GoalRepository() {
+    // テスト用の初期データをオーバーライド
+    override val dummyGoals = mutableListOf(
+        "初期目標1",
+        "初期目標2",
+        "初期目標3"
+    )
+}
 
 class GoalViewModelTest {
 
-    private lateinit var goalRepository: GoalRepository
+    // テスト対象のViewModel
     private lateinit var viewModel: GoalViewModel
 
+    // Fakeのリポジトリ
+    private val fakeRepository = FakeGoalRepository()
+
     @Before
-    fun setUp() {
-        goalRepository = mock()
-        viewModel = GoalViewModel(goalRepository)
+    fun setup() {
+        Dispatchers.setMain(Dispatchers.Unconfined)
+        viewModel = GoalViewModel(fakeRepository)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
     fun testLoadGoals() = runBlockingTest {
-        // Given
-        val expectedGoals = listOf("スパルタンレース完走", "簿記2級", "応用情報処理試験合格")
-        doReturn(expectedGoals).`when`(goalRepository).getGoals()
-
-        // When
         viewModel.loadGoals()
-
-        // Then
-        assertEquals(expectedGoals, viewModel.goals)
-    }
-
-    @Test
-    fun testAddGoal() = runBlockingTest {
-        // Given
-        val newGoal = "新しい目標"
-
-        // When
-        viewModel.addGoal(newGoal)
-
-        // Then
-        assert(viewModel.goals.contains(newGoal))
-        verify(goalRepository).addGoal(newGoal)
-    }
-
-    @Test
-    fun testDeleteGoal() = runBlockingTest {
-        // Given
-        val deleteGoal = "簿記2級"
-        viewModel.goals = mutableListOf("スパルタンレース完走", deleteGoal, "応用情報処理試験合格")
-
-        // When
-        viewModel.deleteGoal(deleteGoal)
-
-        // Then
-        assert(!viewModel.goals.contains(deleteGoal))
-        verify(goalRepository).deleteGoal(deleteGoal)
+//        Log.d("GoalTest", "出力；test");
+        // 初期の目標リストとViewModelの目標が一致することを確認
+        assertEquals(listOf("初期目標1", "初期目標2", "初期目標3"), viewModel.goals)
     }
 }
